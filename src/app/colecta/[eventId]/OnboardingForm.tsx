@@ -73,7 +73,6 @@ export default function OnboardingForm({
     const { data, error } = await supabase
       .from("volunteers")
       .insert({
-        event_id: eventId,
         supermarket_id: supermarketId,
         shift_id: shiftId,
         name: name.trim(),
@@ -82,7 +81,22 @@ export default function OnboardingForm({
       .single();
     setSubmitting(false);
     if (error || !data) {
-      setError("No se pudo registrar tu turno. Intenta nuevamente.");
+      console.error("Error al crear voluntario:", {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+        payload: {
+          supermarket_id: supermarketId,
+          shift_id: shiftId,
+          name: name.trim(),
+        },
+      });
+      setError(
+        error?.message
+          ? `No se pudo registrar tu turno: ${error.message}`
+          : "No se pudo registrar tu turno. Intenta nuevamente."
+      );
       return;
     }
     const supermarket = supermarkets.find((s) => s.id === supermarketId);

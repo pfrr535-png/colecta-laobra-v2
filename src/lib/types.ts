@@ -25,7 +25,6 @@ export interface ShiftRow {
 
 export interface VolunteerRow {
   id: string;
-  event_id: string;
   supermarket_id: string;
   shift_id: string;
   name: string;
