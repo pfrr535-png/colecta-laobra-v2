@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f4f6;
+  --foreground: #1b2a4a;
+  --color-navy: #1b2a4a;
+  --color-navy-dark: #12203c;
+  --color-orange: #e87722;
+  --color-orange-dark: #cf6710;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy: var(--color-navy);
+  --color-navy-dark: var(--color-navy-dark);
+  --color-orange: var(--color-orange);
+  --color-orange-dark: var(--color-orange-dark);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Hide number input spinners for mobile-friendly quantity fields */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+.animate-toast-in {
+  animation: toast-in 0.2s ease-out;
+}
