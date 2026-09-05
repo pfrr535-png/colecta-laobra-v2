@@ -4,7 +4,8 @@ export type WeightUnit = "kg" | "lt" | "g";
 export interface EventRow {
   id: string;
   name: string;
-  event_date: string;
+  date: string;
+  admin_key: string;
   created_at: string;
 }
 
@@ -20,6 +21,7 @@ export interface ShiftRow {
   supermarket_id: string;
   start_time: string;
   end_time: string;
+  capacity: number;
   created_at: string;
 }
 
@@ -42,6 +44,7 @@ export interface ItemRow {
   item_type: ItemType;
   weight_per_unit: number | null;
   weight_unit: WeightUnit | null;
+  total_weight: number | null;
   total_weight_kg: number | null;
   created_at: string;
 }

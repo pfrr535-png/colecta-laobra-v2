@@ -1,4 +1,4 @@
-import { WeightUnit } from "./types";
+import { ItemRow, WeightUnit } from "./types";
 
 export const OTRO = "Otro";
 
@@ -67,4 +67,23 @@ export function toKg(weight: number, unit: WeightUnit): number {
   if (unit === "g") return weight / 1000;
   // kg and lt are treated 1:1, standard approximation used in food drives
   return weight;
+}
+
+/**
+ * Effective total weight in kg for an item. Prefers the stored total_weight_kg,
+ * but falls back to computing it from quantity/weight_per_unit/weight_unit —
+ * many pre-existing items in the live database have those fields set but were
+ * never given a computed total_weight_kg.
+ */
+export function effectiveWeightKg(
+  item: Pick<
+    ItemRow,
+    "total_weight_kg" | "weight_per_unit" | "weight_unit" | "quantity"
+  >
+): number {
+  if (item.total_weight_kg != null) return item.total_weight_kg;
+  if (item.weight_per_unit != null && item.weight_unit != null) {
+    return item.quantity * toKg(item.weight_per_unit, item.weight_unit);
+  }
+  return 0;
 }

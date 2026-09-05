@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { ItemRow, SupermarketRow } from "@/lib/types";
+import { effectiveWeightKg } from "@/lib/constants";
 import { exportEventToExcel } from "@/lib/xlsxExport";
 
 export default function DashboardPanel({
@@ -62,7 +63,7 @@ export default function DashboardPanel({
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const totalKgFood = items
     .filter((i) => i.item_type === "food")
-    .reduce((sum, i) => sum + (i.total_weight_kg ?? 0), 0);
+    .reduce((sum, i) => sum + effectiveWeightKg(i), 0);
   const totalHygieneUnits = items
     .filter((i) => i.item_type === "hygiene")
     .reduce((sum, i) => sum + i.quantity, 0);
@@ -74,7 +75,7 @@ export default function DashboardPanel({
       items: smItems.reduce((sum, i) => sum + i.quantity, 0),
       kgFood: smItems
         .filter((i) => i.item_type === "food")
-        .reduce((sum, i) => sum + (i.total_weight_kg ?? 0), 0),
+        .reduce((sum, i) => sum + effectiveWeightKg(i), 0),
       hygieneUnits: smItems
         .filter((i) => i.item_type === "hygiene")
         .reduce((sum, i) => sum + i.quantity, 0),
@@ -94,14 +95,14 @@ export default function DashboardPanel({
     const existing = productMap.get(key);
     if (existing) {
       existing.quantity += item.quantity;
-      existing.totalKg += item.total_weight_kg ?? 0;
+      existing.totalKg += effectiveWeightKg(item);
     } else {
       productMap.set(key, {
         product_name: item.product_name,
         category: item.category,
         item_type: item.item_type,
         quantity: item.quantity,
-        totalKg: item.total_weight_kg ?? 0,
+        totalKg: effectiveWeightKg(item),
       });
     }
   }

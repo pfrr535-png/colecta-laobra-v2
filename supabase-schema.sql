@@ -6,7 +6,10 @@ create extension if not exists "pgcrypto";
 create table if not exists events (
   id uuid primary key default gen_random_uuid(),
   name text not null,
-  event_date date not null,
+  date date not null,
+  -- Per-event admin key: /admin/[eventId]?key=... is authorized by this
+  -- value (or by the app's global ADMIN_KEY env var as a master override).
+  admin_key text not null,
   created_at timestamptz not null default now()
 );
 
@@ -22,13 +25,13 @@ create table if not exists shifts (
   supermarket_id uuid not null references supermarkets (id) on delete cascade,
   start_time text not null,
   end_time text not null,
+  capacity integer not null default 4,
   created_at timestamptz not null default now(),
   unique (supermarket_id, start_time)
 );
 
 create table if not exists volunteers (
   id uuid primary key default gen_random_uuid(),
-  event_id uuid not null references events (id) on delete cascade,
   supermarket_id uuid not null references supermarkets (id) on delete cascade,
   shift_id uuid not null references shifts (id) on delete cascade,
   name text not null,
@@ -46,13 +49,18 @@ create table if not exists items (
   item_type text not null check (item_type in ('food', 'hygiene')),
   weight_per_unit numeric,
   weight_unit text check (weight_unit in ('kg', 'lt', 'g')),
+  -- total_weight is a legacy/unused duplicate of total_weight_kg kept for
+  -- compatibility with older data; the app only reads total_weight_kg (and
+  -- falls back to computing it from quantity/weight_per_unit/weight_unit
+  -- when null, since older rows were never given a computed value).
+  total_weight numeric,
   total_weight_kg numeric,
   created_at timestamptz not null default now()
 );
 
 create index if not exists idx_supermarkets_event on supermarkets (event_id);
 create index if not exists idx_shifts_supermarket on shifts (supermarket_id);
-create index if not exists idx_volunteers_event on volunteers (event_id);
+create index if not exists idx_volunteers_supermarket on volunteers (supermarket_id);
 create index if not exists idx_items_supermarket on items (supermarket_id);
 create index if not exists idx_items_volunteer on items (volunteer_id);
 

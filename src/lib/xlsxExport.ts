@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 import { supabase } from "./supabaseClient";
+import { effectiveWeightKg } from "./constants";
 import { ItemRow, SupermarketRow } from "./types";
 
 function sanitizeSheetName(name: string): string {
@@ -34,7 +35,7 @@ function aggregateItems(items: ItemRow[]): Aggregated[] {
     const existing = map.get(key);
     if (existing) {
       existing.quantity += item.quantity;
-      existing.total_weight_kg += item.total_weight_kg ?? 0;
+      existing.total_weight_kg += effectiveWeightKg(item);
     } else {
       map.set(key, {
         product_name: item.product_name,
@@ -42,7 +43,7 @@ function aggregateItems(items: ItemRow[]): Aggregated[] {
         quantity: item.quantity,
         weight_per_unit: item.weight_per_unit,
         weight_unit: item.weight_unit,
-        total_weight_kg: item.total_weight_kg ?? 0,
+        total_weight_kg: effectiveWeightKg(item),
       });
     }
   }
