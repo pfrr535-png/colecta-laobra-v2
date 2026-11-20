@@ -53,7 +53,7 @@ export interface ShiftSlot {
   label: string;
 }
 
-export const SHIFT_SLOTS: ShiftSlot[] = Array.from({ length: 9 }, (_, i) => {
+export const SHIFT_SLOTS: ShiftSlot[] = Array.from({ length: 10 }, (_, i) => {
   const startHour = 9 + i;
   const endHour = startHour + 1;
   const start_time = `${String(startHour).padStart(2, "0")}:00`;
